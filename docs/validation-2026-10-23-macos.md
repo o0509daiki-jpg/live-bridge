@@ -26,6 +26,14 @@ Automated: `npm test` 60/60, Python Remote Script tests 23/23 (`uv run --with py
 - Session automation writes, Arrangement recording and the offline saved-Set tools were not exercised in this run (they are covered by the 2026-10-06 Windows run).
 - Not an upstream issue, noted for operators: enumerating the `max_for_live` browser category through a different Remote Script (ahujasid/ableton-mcp) crashed Live 12.1.5 (SIGABRT on a worker thread). Keep that query out of the workflow while Live Bridge is in use.
 
+## live_create_audio_clip (added the same day)
+
+- Session: `ClipSlot.create_audio_clip` with an ASCII path under the User Library and with a path containing Japanese characters and spaces (`Samples/検証 live-bridge/ベース ループ 140 G.wav`) both return `verified:true`; `live_list_clips` lists both clips with the given names and `file_path` matches the request byte for byte.
+- Arrangement: `Track.create_audio_clip` at beat 16 with the original Splice path (which contains a non-breaking space, U+00A0, in the `Splice - KIRsound` folder name) returns the clip at `startTime` 16 / `endTime` 20 and `live_list_clips` confirms it.
+- Refusals observed in Live: MIDI track (`Not an audio track`), occupied slot (`Slot occupied`), missing file (server precheck, nothing sent to Live).
+- Max JS `LiveAPI.call('create_audio_clip', path)` passes a path with spaces as a single argument; no quoting is needed.
+- Operator note: copy file paths from the filesystem (for example `find`), never retype them. The Splice folder name looks like an ordinary hyphen-space but contains U+00A0, so a retyped path fails the server precheck with `Audio file not found`.
+
 ## 日本語
 
 **Live 12.1.5 Suite / macOS 26 (Apple Silicon)** で、既定テンプレートの空 Set を使って確認。制作中の Set は開いていません。
@@ -34,3 +42,10 @@ Automated: `npm test` 60/60, Python Remote Script tests 23/23 (`uv run --with py
 - Remote Script 側: 状態取得、プラグイン検索（AUv2 / VST3）、オーディオトラックへの VST3 挿入を確認。空の MIDI トラックへの挿入は仕様どおり拒否。
 - **修正**: macOS は UDP データグラムが 9216 バイトまで。Remote Script の返答がそれを超えると `[Errno 40] Message too long` で失敗していたため、7000 バイト超の返答を分割して送り、クライアント側で組み立てるようにした。Python / Node 両方にテストを追加。サーバー→Remote Script 方向の要求（上限 14 KB）は未対応で、9216 バイト超はやはり失敗する。
 - **制約**: Control Surface の選び直しでは Remote Script が再読み込みされない（Live の再起動が要る）。検索は `browser.plugins` だけを走査し、Live 標準デバイスは対象外。
+
+### live_create_audio_clip（同日追加）
+
+- Session: User Library 配下の ASCII パスと、日本語＋空白を含むパス（`Samples/検証 live-bridge/ベース ループ 140 G.wav`）の両方で `verified:true`。`live_list_clips` に指定した名前で載り、`file_path` は要求と一致。
+- Arrangement: Splice の元パス（`Splice - KIRsound` の区切りがノーブレークスペース U+00A0）で拍 16 に配置、`startTime` 16 / `endTime` 20 を確認。
+- 拒否の実機確認: MIDI トラック、使用中スロット、存在しないファイル（サーバー側で止まり Live に送らない）。
+- 運用メモ: パスはファイルシステムから取る（`find` など）。手で打ち直すと U+00A0 が普通の空白になり「Audio file not found」で止まる。
