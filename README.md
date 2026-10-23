@@ -6,7 +6,7 @@ Control Ableton Live from MCP clients such as Codex and Antigravity using a Max 
 
 ![Live Bridge mascot](assets/bridge-mascot.png)
 
-The MCP server and Max devices are **v0.13**, with **63 MCP tools**. JavaScript and the mascot image are bundled inside each `.amxd`. The browser Remote Script is **v0.4.0**.
+The MCP server and Max devices are **v0.13**, with **65 MCP tools**. JavaScript and the mascot image are bundled inside each `.amxd`. The browser Remote Script is **v0.4.0**.
 
 ## Arrangement recording and curve generation in v0.13 (experimental)
 
@@ -96,6 +96,8 @@ For updates, run setup again and reload the device in Live. Restart Live wheneve
 ## Create MIDI clips
 
 `live_create_clip` creates a Session clip from a note array and can copy it to a specified Arrangement beat position. See [arguments, examples, and limitations (Japanese)](docs/create-clip.md).
+
+`live_ears_list` / `live_ears_capture` talk to [Ears](docs/ears.md) devices (a separate M4L audio effect: [live-ears](https://github.com/o0509daiki-jpg/live-ears)) and record N bars of a track's real audio to a 24-bit WAV for analysis, starting at the next bar boundary while the transport is already running. Verified on Live 12.1.5 / macOS: a 140 BPM / G loop captured for 4 and 8 bars analyses as 139.7 BPM / G major. See [tool guide (Japanese)](docs/ears.md).
 
 `live_create_audio_clip` creates an audio clip that references an audio file already on disk, in an empty Session slot or at an Arrangement beat position of an audio track (Live's `ClipSlot.create_audio_clip` / `Track.create_audio_clip`). The server checks that the file exists before contacting Live; the device verifies the created clip and returns its file path, length and warping state. No Remote Script needed. Verified on Live 12.1.5 / macOS with paths containing spaces, non-ASCII characters and a non-breaking space. See [arguments and limitations (Japanese)](docs/create-audio-clip.md).
 

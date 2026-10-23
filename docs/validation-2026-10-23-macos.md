@@ -34,6 +34,13 @@ Automated: `npm test` 60/60, Python Remote Script tests 23/23 (`uv run --with py
 - Max JS `LiveAPI.call('create_audio_clip', path)` passes a path with spaces as a single argument; no quoting is needed.
 - Operator note: copy file paths from the filesystem (for example `find`), never retype them. The Splice folder name looks like an ordinary hyphen-space but contains U+00A0, so a retyped path fails the server precheck with `Audio file not found`.
 
+## Ears capture (live_ears_list / live_ears_capture, added the same day)
+
+- Two Ears instances on the audio track answered on 17840 and 17841 (port = position among Ears devices), reporting track, tempo 140, 4/4, sample rate 44100 and transport state.
+- With the 140 BPM / G Splice bass loop playing from a Session clip, `live_ears_capture` recorded 4 bars (6.857 s, 1,815,656 bytes) and 8 bars (13.714 s) as 24-bit stereo WAV, each starting on a bar boundary (`startBeat` 24.03 and 8.03).
+- `segment_analyze.py` on the captures: 139.67 BPM, G major (the 4-bar file carries a "shorter than 8 s" warning; the 8-bar file has none). The source file name states 140 BPM / G.
+- Refusal checked earlier in unit tests only: stopped transport, busy device, bad bars/path. In Live, the capture started 20-30 ms after the bar boundary (control-rate polling), which is acceptable for analysis.
+
 ## 日本語
 
 **Live 12.1.5 Suite / macOS 26 (Apple Silicon)** で、既定テンプレートの空 Set を使って確認。制作中の Set は開いていません。
@@ -49,3 +56,10 @@ Automated: `npm test` 60/60, Python Remote Script tests 23/23 (`uv run --with py
 - Arrangement: Splice の元パス（`Splice - KIRsound` の区切りがノーブレークスペース U+00A0）で拍 16 に配置、`startTime` 16 / `endTime` 20 を確認。
 - 拒否の実機確認: MIDI トラック、使用中スロット、存在しないファイル（サーバー側で止まり Live に送らない）。
 - 運用メモ: パスはファイルシステムから取る（`find` など）。手で打ち直すと U+00A0 が普通の空白になり「Audio file not found」で止まる。
+
+### Ears による収録（live_ears_list / live_ears_capture、同日追加）
+
+- オーディオトラックに置いた 2 台の Ears が 17840 / 17841 で応答（ポートは Set 内の並び順）。トラック名・テンポ 140・4/4・44100 Hz・再生状態を返す。
+- 140 BPM / G の Splice ベースループを Session クリップで再生し、4 小節（6.857 秒）と 8 小節（13.714 秒）を 24bit ステレオ WAV に収録。どちらも小節頭から（startBeat 24.03 / 8.03）。
+- `segment_analyze.py` の結果は 139.67 BPM / G major（4 小節は「8 秒未満」の注意付き、8 小節は注意なし）。元素材のファイル名は 140 BPM / G。
+- 開始は小節頭から 20〜30 ms 遅れる（コントロールレート監視）。解析用途では許容。

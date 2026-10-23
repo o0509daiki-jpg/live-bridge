@@ -6,7 +6,7 @@ Ableton LiveをCodex / AntigravityなどのMCPクライアントから操作す�
 
 ![Live Bridge mascot](assets/bridge-mascot.png)
 
-MCPサーバー・Maxデバイスともv0.13（63ツール、Remote Script v0.4.0）。JSと画像は.amxdへ同梱されます。
+MCPサーバー・Maxデバイスともv0.13（65ツール、Remote Script v0.4.0）。JSと画像は.amxdへ同梱されます。
 
 ## v0.13 アレンジメントへの自動記録・曲線生成（実験的）
 
@@ -91,6 +91,8 @@ AIとの接続にはPC側のMCPサーバーが必要なので、distフォルダ
 ## 新しいMIDIクリップの作成
 
 live_create_clipでノート配列からSessionクリップを作成し、任意の拍位置にArrangementへ配置できます。[引数・例・制限](docs/create-clip.md)を参照してください。
+
+live_ears_list / live_ears_capture は別リポジトリ [live-ears](https://github.com/o0509daiki-jpg/live-ears) の M4L オーディオエフェクト「Ears」と話し、再生中のトラックの実音を次の小節頭から N 小節だけ 24bit WAV に書き出します（解析用）。Live 12.1.5 / macOS で、140 BPM / G のループを 4・8 小節収録し、解析で 139.7 BPM / G major を得ました。[使い方と制限](docs/ears.md)。
 
 live_create_audio_clipで、ディスク上のオーディオファイルを参照するオーディオクリップを、オーディオトラックの空きSessionスロットかArrangementの拍位置に作成できます（Liveの`ClipSlot.create_audio_clip` / `Track.create_audio_clip`）。サーバーがファイルの存在を確認してからLiveへ送り、デバイス側で作成結果（ファイルパス・長さ・Warp状態）を検証して返します。Remote Scriptは不要です。Live 12.1.5 / macOSで、空白・日本語・ノーブレークスペースを含むパスで確認済み。[引数と制限](docs/create-audio-clip.md)。
 
